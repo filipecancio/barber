@@ -1,29 +1,28 @@
 package dev.cancio.barber.ui.screen
 
-import android.text.style.ClickableSpan
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import dev.cancio.barber.viewmodel.HomeViewModel
 
 @Composable
 fun HomeScreen() {
+    val scope = rememberCoroutineScope()
+    val viewModel = HomeViewModel()
+
     Box(
         modifier = Modifier.fillMaxWidth()
     ) {
         Button(
             modifier = Modifier
                 .align(Alignment.Center),
-            onClick = { /*TODO*/ }
+            onClick = { viewModel.onClickButton(scope) }
         ) {
             Text(text = "Aperte")
         }
