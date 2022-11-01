@@ -4,7 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.speech.SpeechRecognizer
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,18 +23,25 @@ import dev.cancio.barber.viewmodel.HomeViewModel
 fun HomeScreen(
     context: Context,
 ) {
-
     val viewModel = HomeViewModel(context)
+    val text = remember {
+        mutableStateOf("")
+    }
 
     Box(
         modifier = Modifier.fillMaxWidth()
     ) {
-        Button(
-            modifier = Modifier
-                .align(Alignment.Center),
-            onClick = { viewModel.onClickButton() }
+        LazyColumn(
+            modifier = Modifier.align(Alignment.Center)
         ) {
-            Text(text = viewModel.updateText())
+            item { Text(text = text.value) }
+            item {
+                Button(
+                    onClick = { text.value = viewModel.onClickButton() }
+                ) {
+                    Text(text = viewModel.updateText())
+                }
+            }
         }
     }
 }

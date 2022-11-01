@@ -37,14 +37,16 @@ class HomeViewModel(
 
     private fun initViewState() = ViewState(spokenText = "", isListening = false, error = null)
 
-    fun startListening() {
+    fun startListening():String {
         speechRecognizer.startListening(recognizerIntent)
         notifyListening(isRecording = true)
+        return "ouvindo"
     }
 
-    fun stopListening() {
+    fun stopListening():String {
         speechRecognizer.stopListening()
         notifyListening(isRecording = false)
+        return uiState.spokenText
     }
 
     private fun notifyListening(isRecording: Boolean) {
