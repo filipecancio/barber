@@ -9,17 +9,20 @@ import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.speech.SpeechRecognizer.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import dev.cancio.barber.ui.screen.ViewState
 
 class HomeViewModel(
     context: Context,
 ): ViewModel(), RecognitionListener {
 
-    private var viewState: MutableLiveData<ViewState>? = null
+    var uiState by mutableStateOf(ViewState())
+        private set
 
     private val speechRecognizer: SpeechRecognizer = createSpeechRecognizer(context).apply {
         setRecognitionListener(this@HomeViewModel)
@@ -30,19 +33,7 @@ class HomeViewModel(
         putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
     }
 
-    private val isListening
-        get() = viewState?.value?.isListening ?: false
-
     var permissionToRecordAudio = checkAudioRecordingPermission(context)
-
-    fun getViewState(): LiveData<ViewState> {
-        if (viewState == null) {
-            viewState = MutableLiveData()
-            viewState?.value = initViewState()
-        }
-
-        return viewState as MutableLiveData<ViewState>
-    }
 
     private fun initViewState() = ViewState(spokenText = "", isListening = false, error = null)
 
@@ -57,21 +48,21 @@ class HomeViewModel(
     }
 
     private fun notifyListening(isRecording: Boolean) {
-        viewState?.value = viewState?.value?.copy(isListening = isRecording)
+        uiState = uiState.copy(isListening = isRecording)
     }
 
     private fun updateResults(speechBundle: Bundle?) {
         val userSaid = speechBundle?.getStringArrayList(RESULTS_RECOGNITION)
-        viewState?.value = viewState?.value?.copy(spokenText = userSaid?.get(0) ?: "")
+        uiState = uiState.copy(spokenText = userSaid?.get(0) ?: "")
     }
 
-    fun onClickButton() = if(isListening){
+    fun onClickButton() = if(uiState.isListening){
         stopListening()
     } else {
         startListening()
     }
 
-    fun updateText() = if(isListening){
+    fun updateText() = if(uiState.isListening){
         "Ouvindo"
     } else {
         "Aperte"
@@ -83,7 +74,7 @@ class HomeViewModel(
     override fun onEndOfSpeech() = notifyListening(isRecording = false)
 
     override fun onError(errorCode: Int) {
-        viewState?.value = viewState?.value?.copy(error = when (errorCode) {
+        uiState = uiState.copy(error = when (errorCode) {
             ERROR_AUDIO -> "error_audio_error"
             ERROR_CLIENT -> "error_client"
             ERROR_INSUFFICIENT_PERMISSIONS -> "error_permission"
@@ -106,4 +97,10 @@ class HomeViewModel(
     override fun onBufferReceived(p0: ByteArray?) {}
     override fun onEvent(p0: Int, p1: Bundle?) {}
     override fun onBeginningOfSpeech() {}
+
+    data class ViewState(
+        val spokenText: String = "",
+        val isListening: Boolean = false,
+        val error: String? = null
+    )
 }

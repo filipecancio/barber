@@ -36,9 +36,3 @@ fun HomeScreen(
         }
     }
 }
-
-data class ViewState(
-    val spokenText: String,
-    val isListening: Boolean,
-    val error: String?
-)
