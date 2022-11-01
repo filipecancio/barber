@@ -27,10 +27,7 @@ fun HomeScreen() {
                 .align(Alignment.Center),
             onClick = { state.value = viewModel.onClickButton(scope) }
         ) {
-            Text(text = when(state.value){
-                HearState.Yes -> "Ouvindo"
-                else -> "Aperte"
-            })
+            Text(text = viewModel.updateText(state.value))
         }
     }
 }

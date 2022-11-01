@@ -14,4 +14,9 @@ class HomeViewModel(): ViewModel() {
         }
         return HearState.Yes
     }
+
+    fun updateText(state: HearState) = when(state){
+        HearState.Yes -> "Ouvindo"
+        else -> "Aperte"
+    }
 }
